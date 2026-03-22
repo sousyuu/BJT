@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日語商務閱讀與文法測驗</title>
+  
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 引入 React 與 ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- 引入 Babel (用來在瀏覽器中編譯 React 的 JSX 語法) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-50">
+  <!-- React 應用程式將會渲染在這個 div 裡面 -->
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // ==========================================
+    // 💡 教師設定區
+    // ==========================================
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwv9IE1VyhrR8fk3Zd-r8ih9wUFSdo1qI4O6vgpe_IIJobVHWKYPslrIRUfkU3MHOds/exec'; 
+    // ==========================================
+
+    const testData = [
+      {
+        id: 'sec1',
+        title: 'セクション 1',
+        description: '語彙・文法問題',
+        questions: [
+          {
+            id: '1-1',
+            text: '今期の増益は、海外事業が売り上げに＿＿＿ことによるものだ。',
+            options: ['与えた', '活かした', '貢献した', '活躍した'],
+            correctAnswer: 2
+          },
+          {
+            id: '1-2',
+            text: 'もう少し価格を下げてくださるんでしたら、考え＿＿＿んですが。',
+            options: ['なくてもいい', 'なければならない', 'ようとする', 'なくもない'],
+            correctAnswer: 3
+          },
+          {
+            id: '1-3',
+            text: '経験がないなら＿＿＿、彼は勤続20年のベテランなんだからそんな言い訳は通用しない。',
+            options: ['いざしらず', 'さておき', 'とにかく', 'のみならず'],
+            correctAnswer: 0
+          },
+          {
+            id: '1-4',
+            text: '目標が達成できたのはみなさんの努力の成果に＿＿＿',
+            options: ['おかげです', 'よりません', 'ほかなりません', 'すぎません'],
+            correctAnswer: 2
+          },
+          {
+            id: '1-5',
+            text: '新しいサービスによって、利便性は＿＿＿上がるだろう。',
+            options: ['圧倒的に', '飛躍的に', '比較的に', '客観的に'],
+            correctAnswer: 1
+          },
+          {
+            id: '1-6',
+            text: '資金繰りがこうも厳しくては、プロジェクトからの撤退は＿＿＿だ。',
+            options: ['不可避', '不可逆', '不必要', '不可能'],
+            correctAnswer: 0
+          },
+          {
+            id: '1-7',
+            text: '話の持っていき方＿＿＿は、契約が取れるかもしれない。',
+            options: ['場合で', '次第に', '問わずに', 'いかんで'],
+            correctAnswer: 3
+          },
+          {
+            id: '1-8',
+            text: '今年の新人の態度は、失礼極＿＿＿',
+            options: ['まらない', 'まりない', 'まれない', 'まわれる'],
+            correctAnswer: 1
+          },
+          {
+            id: '1-9',
+            text: '中東情勢の悪化で、現地社員の安全が＿＿＿されている。',
+            options: ['懸案', '不安', '懸念', '難色'],
+            correctAnswer: 2
+          },
+          {
+            id: '1-10',
+            text: '客先に約束した＿＿＿、部長を説得する自信がない。',
+            options: ['ものを', 'もので', 'ものか', 'ものの'],
+            correctAnswer: 3
+          },
+          {
+            id: '1-11',
+            text: '土地開発のあおりを受けて、地元の人々は先祖代々の土地からの移転を＿＿＿されている。',
+            options: ['際限なく', '余儀なく', '変更なく', '無理やり'],
+            correctAnswer: 1
+          },
+          {
+            id: '1-12',
+            text: '申し訳ございません。ただいま名刺を＿＿＿おりまして･･････。',
+            options: ['切らして', '無くして', '持たずに', '足さずに'],
+            correctAnswer: 0
+          },
+          {
+            id: '1-13',
+            text: '私には＿＿＿ので･･････ただいま担当の者に代わります。',
+            options: ['わかりかねます', 'わかりかねません', '受け入れかねます', '受け入れかねません'],
+            correctAnswer: 0
+          },
+          {
+            id: '1-14',
+            text: 'X社との業務提携が実現したのは、ヤマダ産業の社長が＿＿＿くれたからだ。',
+            options: ['間を縮めて', '仲を割って', '間に入って', '仲に入れて'],
+            correctAnswer: 2
+          },
+          {
+            id: '1-15',
+            text: '原案をよく＿＿＿上で、部の総意として役員会にかけよう。',
+            options: ['絞めた', '揉んだ', '積んだ', '込んだ'],
+            correctAnswer: 1
+          },
+          {
+            id: '1-16',
+            text: '経営のトップが代わって、社内の＿＿＿がよくなった。',
+            options: ['風当たり', '風通し', '風向き', '風上'],
+            correctAnswer: 1
+          },
+          {
+            id: '1-17',
+            text: '言う＿＿＿もありませんが、明日は時間厳守でお願いします。',
+            options: ['わけ', 'こと', 'ほど', 'まで'],
+            correctAnswer: 3
+          },
+          {
+            id: '1-18',
+            text: 'いくらたたき台の資料とはいえ、こんな＿＿＿とした数字では、先方が承知しないだろう。',
+            options: ['がっつり', 'ざっくり', 'きっちり', 'あっさり'],
+            correctAnswer: 1
+          },
+          {
+            id: '1-19',
+            text: '自分の信念を曲げて＿＿＿、出世したいとは思わない。',
+            options: ['から', 'なら', 'まで', 'こそ'],
+            correctAnswer: 2
+          },
+          {
+            id: '1-20',
+            text: '他部署と協働して、解決策を＿＿＿した。',
+            options: ['模索', '思索', '検索', '搜索'],
+            correctAnswer: 0
+          }
+        ]
+      },
+      {
+        id: 'sec2',
+        title: 'セクション 2',
+        description: '',
+        questions: [
+          {
+            id: '2-1',
+            text: 'A: はじめまして、森と申します。\nB: あなたが森さんですか。お噂はかねがね＿＿＿。',
+            options: ['伺っていますよ', '伺いましたよ', '伺いますよ', '伺ったことがありますよ'],
+            correctAnswer: 0
+          },
+          {
+            id: '2-2',
+            text: 'A: 部長、すみません、＿＿＿の時にこちらの企画書を見ていただきたいのですが。\nB: わかりました。',
+            options: ['暇つぶし', 'お手間', 'お手隙', '余暇'],
+            correctAnswer: 2
+          },
+          {
+            id: '2-3',
+            text: 'A: 山田君、今朝のニュース見たかい。我々の新商品が取り上げられてたよ。\nB: ええ、私も＿＿＿。',
+            options: ['見ました', '拝見しました', 'ご覧になりました', 'お目にかかりました'],
+            correctAnswer: 0
+          },
+          {
+            id: '2-4',
+            text: 'A: ごぶさたしております。\nB: こちらこそ。＿＿＿ありがとうございました。',
+            options: ['その時はどうも', 'その折はどうも', 'その際はどうも', 'その節はどうも'],
+            correctAnswer: 3
+          },
+          {
+            id: '2-5',
+            text: 'A: 実は、納期の件なんですが、あと3日ほど＿＿＿と思いまして･･････。\nB: 3日ですか･･････うーん、それは厳しいですね･･････。',
+            options: ['お待ちしたい', 'お待ちいただけないか', '待たせていただきたい', 'お待ちしていただきたい'],
+            correctAnswer: 1
+          },
+          {
+            id: '2-6',
+            text: 'A: 今回の在庫引取りの件では、いろいろありがとうございました。御社の＿＿＿で、なんとか乗り切ることができました。\nB: いえいえ。お役に立てたのなら幸いです。',
+            options: ['お世話さま', 'おかげ', 'おかげさま', 'お世話'],
+            correctAnswer: 1
+          },
+          {
+            id: '2-7',
+            text: '御社の来期の商品戦略について、＿＿＿お聞かせいただけないでしょうか。',
+            options: ['お出来になる限り', 'お邪魔にならなければ', 'お差しつかえない範囲で', 'お暇になりましたら'],
+            correctAnswer: 2
+          },
+          {
+            id: '2-8',
+            text: 'A: わざわざ＿＿＿すみませんね。\nB: いえいえ、ついでがあったもんですから。',
+            options: ['ご迷惑いただいて', 'ご面倒いただいて', 'ご苦労いただいて', 'ご足労いただいて'],
+            correctAnswer: 3
+          },
+          {
+            id: '2-9',
+            text: 'A: これまでのおつきあいをご配慮いただいて、＿＿＿お願いします。\nB: うーん、そう言われましてもねえ･･････。',
+            options: ['なんとか', 'なんとなく', 'なんでも', 'なんらか'],
+            correctAnswer: 0
+          },
+          {
+            id: '2-10',
+            text: 'A: 制度そのものを抜本的に変える必要があると思いますが。\nB: ＿＿＿が、周りに与える影響の大きさも無視できないんじゃないでしょうか。',
+            options: ['おっしゃった通りです', 'おっしゃる必要はあります', 'おっしゃったわけです', 'おっしゃることはわかります'],
+            correctAnswer: 3
+          },
+          {
+            id: '2-11',
+            text: 'A: この方向で進めてもよろしいでしょうか。\nB: ええ、基本的には結構です。＿＿＿、スケジュールについてはもうちょっと考えていただければと思いますが･･････。',
+            options: ['そこで', 'ただ', '重ねて', 'ところで'],
+            correctAnswer: 1
+          },
+          {
+            id: '2-12',
+            text: 'お客様、恐れ入りますが、こちらでのご飲食は＿＿＿。',
+            options: ['おやめください', 'お控えください', 'ご禁止ください', 'ご抑制ください'],
+            correctAnswer: 1
+          },
+          {
+            id: '2-13',
+            text: 'A: じゃ、＿＿＿。\nB: ええ、よろしくお願いします。今日はありがとうございました。',
+            options: ['それで', '以上で', '終わりで', 'そういうことで'],
+            correctAnswer: 3
+          },
+          {
+            id: '2-14',
+            text: '鈴木様の携帯電話でしょうか。私、アイエスサービスの市川ですが、今、お電話＿＿＿。',
+            options: ['結構でしょうか', '問題でしょうか', '失礼でしょうか', 'よろしいでしょうか'],
+            correctAnswer: 3
+          },
+          {
+            id: '2-15',
+            text: 'A: せっかくですが、今回のお話は＿＿＿にしていただきたいんですが･･････。\nB: そうですか。残念です。',
+            options: ['なかったこと', 'なくしたこと', 'ないよう', 'なくすよう'],
+            correctAnswer: 0
+          },
+          {
+            id: '2-16',
+            text: 'A: 先方の条件を全部受け入れるんですか。\nB: いや、全部というわけではないが、このままでは＿＿＿だから。どこかで折り合わないと。',
+            options: ['一直線', '曲線', '平行線', '蛇行'],
+            correctAnswer: 2
+          },
+          {
+            id: '2-17',
+            text: 'A: 中川はただいま外出しておりまして･･････。＿＿＿ご用件を承りますが。\nB: そうですか。ではお願いします。',
+            options: ['私がよろしければ', '私でよろしければ', '私がよろしかったら', '私さえよろしければ'],
+            correctAnswer: 1
+          },
+          {
+            id: '2-18',
+            text: 'A: では、池田部長がお戻りになりましたら、明日の2時に御社に伺わせていただくとお伝えください。\nB: 承知しました。復唱いたします。明日の2時に＿＿＿ということですね。',
+            options: ['弊社にいらっしゃる', '弊社に参る', '御社にいらっしゃる', '御社に伺う'],
+            correctAnswer: 0
+          },
+          {
+            id: '2-19',
+            text: '近くまで来たものですから、ご挨拶＿＿＿と思いまして。',
+            options: ['だけでも', 'だけなら', 'のみならず', 'してこそ'],
+            correctAnswer: 0
+          },
+          {
+            id: '2-20',
+            text: 'A: おたくの新商品、出足好調だってね。\nB: ええ、多くのお客様から使いやすいというお言葉を＿＿＿。',
+            options: ['いただいていらっしゃいます', 'いただきたいと思います', 'ちょうだいしていらっしゃいます', 'ちょうだいしております'],
+            correctAnswer: 3
+          }
+        ]
+      },
+      {
+        id: 'sec3',
+        title: 'セクション 3',
+        description: '',
+        questions: [
+          {
+            id: '3-1',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="text-right mb-4">○○○○年○月○日</div>
+                <div className="mb-4">
+                  <div>株式会社○○</div>
+                  <div>代表取締役社長　○○○○様</div>
+                </div>
+                <div className="text-right mb-6">
+                  <div>○○株式会社</div>
+                  <div>代表取締役社長　○○○○</div>
+                </div>
+                <div className="mb-4">
+                  拝啓　時下ますますご盛栄のこととお喜び申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  さて、すでにご承知のことと存じますが、弊社では現在、東南線横田駅前にショッピングセンター「ヒルズ横田」を建設中でございます。この「ヒルズ横田」は、「新しいライフスタイルの提案と交流の場」をコンセプトとしており、物品販売と飲食店の集合体といった従来のショッピングセンターとは一線を画するものでございます。また、商業地域としての立地条件もよく、非常に期待の持てるマーケットであると確信いたしております。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  つきましては、別記要領にて当ショッピングセンターへの出店を希望される専門店様に向けて説明会を開催いたしますので、よろしくご検討の上、ぜひご参加賜りますようお願い申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  なお、同ショッピングセンターの建築概要の資料は、当日ご参加の方のみにお渡しいたします。
+                </div>
+                <div className="text-right mt-4">敬具</div>
+              </div>
+            ),
+            text: '次のような手紙を受け取りました。\n用件は何ですか。',
+            options: ['出店の勧誘', '市場調査の依頼', '説明会開催の依頼', '資料請求'],
+            correctAnswer: 0
+          },
+          {
+            id: '3-2',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="text-right mb-4">○○○○年10月3日</div>
+                <div className="mb-2">お客様各位</div>
+                <div className="text-right mb-6">
+                  <div>株式会社○○</div>
+                  <div>代表取締役社長　○○○○</div>
+                </div>
+                <div className="mb-4">
+                  拝啓　時下ますますご清栄のこととお喜び申し上げます。平素は格別のお引き立てにあずかり、厚く御礼申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  さて、ご利用いただいておりますBEP浄水器につきましては、従来もご希望のお客様に対し、6か月に一度のアフターケアを承ってまいりましたが、このたび新たに週1回のケア代行サービスを開始することになりました。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  BEP浄水器は画期的な新処理方式により、お客様による内部清掃を最小限に軽減しておりますが、新サービスはすべてのケアを代行するとともに、機器の状態を集中管理しようというものです。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  サービスの内容および料金については別紙の通りとなっております。ご高覧の上、ぜひとも導入をご検討いただきたくお願い申し上げます。
+                </div>
+                <div className="text-right mt-4">敬具</div>
+              </div>
+            ),
+            text: '次のような手紙を受け取りました。\n新サービスの特徴は何ですか。',
+            options: ['画期的な新処理方式を採用したこと', '内部清掃を最小限に軽減したこと', '週1回、全部のケアを代行すること', '半年に1回、無料ケアを実施すること'],
+            correctAnswer: 2
+          },
+          {
+            id: '3-3',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="text-right mb-4">○○○○年3月10日</div>
+                <div className="mb-4">
+                  <div>○○株式会社</div>
+                  <div>代表取締役　○○○○様</div>
+                </div>
+                <div className="text-right mb-6">
+                  <div>○○株式会社</div>
+                  <div>代表取締役社長　○○○○○○</div>
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  前略　さて、貴社で製造販売されている製品名 MMBについてお尋ねいたします。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  貴社製品 MMBは、弊社所有の特許権第50341X号および実用新案権第798433X号による技術に類似した製法で製造していることを、弊社開発部が調査により指摘しております。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  弊社といたしましては、貴社製品 MMBは当社の特許権を侵害している恐れがあると判断いたしました。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  つきましては、至急検討していただき、しかるべき措置をとられますよう要望いたします。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  ご検討の結果を、当社宛てに○○○○年3月25日までにご回答いただきたくお願い申し上げます。
+                </div>
+                <div className="text-right mt-4">草々</div>
+              </div>
+            ),
+            text: '次のような手紙を受け取りました。\n先方は何をしてほしいと言っていますか。',
+            options: ['MMBの不具合の原因を調べてほしい。', 'MMBの製造・販売を中止してほしい。', 'MMBを作るので特許権を使わせてほしい。', 'MMBの製品名を変更してほしい。'],
+            correctAnswer: 1
+          },
+          {
+            id: '3-4',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="text-right mb-4">○○○○年○月○日</div>
+                <div className="mb-4">
+                  <div>○○物産株式会社</div>
+                  <div>営業部長　○○○○様</div>
+                </div>
+                <div className="text-right mb-6">
+                  <div>○○株式会社</div>
+                  <div>開発部長　○○○○</div>
+                </div>
+                <div className="mb-4">
+                  拝啓　貴社ますますご清祥のこととお喜び申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  先日は、弊社新製品 SV503のデモンストレーションのためにお時間をお取りいただいておりましたにもかかわらず、当方の事情でお伺いできなくなり、貴社の皆様に大変なご迷惑をおかけいたしましたことを深くお詫び申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  デモンストレーション前日になりまして、ご紹介申し上げる予定のオプション機能に不具合が生じ、原因を特定するためにお時間をいただいた次第でございます。その後、原因を特定、回避策も明らかになっております。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  大変恐縮ですが、新たにお時間を設けてくださいましたら、万全の準備を整えてお伺いしたいと存じます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  近日中にあらためてお電話させていただきますので、どうかよろしくお願い申し上げます。
+                </div>
+                <div className="text-right mt-4">敬具</div>
+              </div>
+            ),
+            text: '次のような手紙を受け取りました。\n用件は何ですか。',
+            options: ['デモンストレーション取り消しのお願い', 'デモンストレーション再設定のお願い', 'SV503のオプション機能追加のお知らせ', 'SV503の不具合の原因のお知らせ'],
+            correctAnswer: 1
+          },
+          {
+            id: '3-5',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="text-right mb-4">○○○○年○月○日</div>
+                <div className="mb-4">
+                  <div>○○商事株式会社</div>
+                  <div>代表取締役社長　○○○○様</div>
+                </div>
+                <div className="text-right mb-6">
+                  <div>○○株式会社</div>
+                  <div>代表取締役社長　○○○○○○○○</div>
+                </div>
+                <div className="mb-4">
+                  拝復　貴社いよいよご隆盛のこととお喜び申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  さて、お申し越しのありました直接お取引の件でございますが、流通システムの簡素化は、時代の流れを考えますとごもっともなお考えだと存じます。ただ、当社の経営方針といたしましては、当面、販売部門は全国の代理店に委ね、私どもは製造に専念する所存でございます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  本来ならば、当社も今回の貴社からのお申し入れにお応えできる体制を作っておかなければならないのですが、遺憾ながらそこまではまだ力が及ばない状況でございます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  何とぞ、事情をご賢察の上、悪しからずご了承くださいますようお願い申し上げます。
+                </div>
+                <div className="text-right mt-4">敬具</div>
+              </div>
+            ),
+            text: '次のような手紙を受け取りました。\n用件は何ですか。',
+            options: ['販売部門は代理店に任せられない。', 'これからは製造だけではやっていけない。', '流通システムを簡素化するつもりだ。', '直接取引には応じられない。'],
+            correctAnswer: 3
+          },
+          {
+            id: '3-6',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="text-right mb-4">○○○○年5月15日</div>
+                <div className="mb-4">
+                  <div>○○株式会社</div>
+                  <div>営業第一課課長　○○○○様</div>
+                </div>
+                <div className="text-right mb-6">
+                  <div>株式会社○○</div>
+                  <div>営業部長　○○○○</div>
+                </div>
+                <div className="mb-4">
+                  拝啓　貴社ますますご繁栄のこととお喜び申し上げます。<br/>
+                  平素は格別のご愛顧をいただき厚く御礼申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  さて、5月14日付け貴信によりご注文いただきましたE-330でございますが、発売以来弊社の予想を大幅に上回る売れ行きで、現在在庫切れの状態となっております。現在、フル稼働で製造しておりますが、お届けできるのは、ご指定の納期日より約1か月遅れとなる見込みです。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  つきましては、同製品の改良型F-120が発売されており、従来品より性能もよく、価格も割安となっておりますことから、同封のカタログをご検討いただけると幸甚でございます。代替品でよろしければすぐに手配させていただきます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  恐縮でございますが、再度ご検討いただきまして、あらためてご一報くださいますようお願い申し上げます。
+                </div>
+                <div className="text-right mt-4">敬具</div>
+              </div>
+            ),
+            text: '次のような手紙を受け取りました。\n手紙を受け取った社員は一番はじめに何をしますか。',
+            options: ['先方の納期を待つ。', '先方に代替品を注文する。', 'E-330のカタログを見て検討する。', 'E-330にするか、F-120にするかを検討する。'],
+            correctAnswer: 3
+          },
+          {
+            id: '3-7',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="mb-4">
+                  拝復　このたびはご丁重なお見舞い状を賜り、心より御礼申し上げます。<br/>
+                  社員一同どれだけ励みになったか、言葉に尽くせません。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  数十年に一度と言われる集中豪雨のため、テレビや新聞等で報道されましたように、東川が氾濫し、町の中心部が冠水しました。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  そのような中で、さいわいにも弊社は床下浸水程度で、社屋の損壊もさほどではなく、人的被害は皆無でした。操業にはほとんど影響がなく、皆様にはご迷惑をおかけせずにすみそうです。どうかご休心ください。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  本来は早速参上して、お礼申し上げるところでございますが、まずは取り急ぎ書面をもってご報告まで。
+                </div>
+                <div className="text-right mt-4">敬具</div>
+              </div>
+            ),
+            text: '次のような手紙が届きました。この手紙の用件は何ですか。',
+            options: ['町の被害に対する心のこもった見舞い状に、町民も社員も勇気を得たということ。', '町同様、弊社も甚大な被害を受けたので、操業への影響は計り知れないということ。', '町は水害に見舞われたが、弊社の被害は大したことはないので安心してほしいということ。', '町も弊社もマスコミで大きく報道され、騒がれているので、静かにしてほしいということ。'],
+            correctAnswer: 2
+          },
+          {
+            id: '3-8',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="text-center font-bold mb-6">
+                  ○○○○年7月10日締結の物品売買契約書に付随する支払覚書
+                </div>
+                <div className="mb-4">
+                  株式会社川上商店(以下甲と称す) と村田酒造株式会社(以下乙と称す)は 、○○○○年7月10日付契約書第6条2項の支払い条件について、双方合意の上、後記の件についてのみ例外として認め、覚書とする。
+                </div>
+                <div className="text-center mb-4">記</div>
+                <div className="mb-6 pl-4 sm:pl-6" style={{ textIndent: '-1.5em' }}>
+                  1. 契約書第6条2項、甲が乙に対し支払う商品の代金は、各月末払いとなっているが、支払代金が1か月50万円を超えた場合は、50万円を各月末払いとし、残金は乙の決算期に当たる3月末日、及び9月末日に半年分を一括払いとする。
+                </div>
+                <div className="text-left mb-6">
+                  ○○○○年7月10日
+                </div>
+                <div className="text-right text-xs sm:text-sm">
+                  <div className="mb-4">
+                    千葉県千葉市○○○<br/>
+                    株式会社川上商店<br/>
+                    代表取締役社長 川上 太
+                  </div>
+                  <div>
+                    秋田県秋田市○○○<br/>
+                    村田酒造株式会社<br/>
+                    代表取締役社長 村田一郎
+                  </div>
+                </div>
+              </div>
+            ),
+            text: '次の文書は支払いに関する覚書です。\n7月の支払い代金が65万円の場合、甲は乙に対しどのように支払いますか。',
+            options: ['7月31日に50万円、3月31日に15万円を支払う。', '7月31日に50万円、9月30日に15万円を支払う。', '7月31日に65万円を支払う。', '9月30日に65万円を支払う。'],
+            correctAnswer: 1
+          },
+          {
+            id: '3-9',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif border p-4 sm:p-6 rounded-lg bg-white shadow-sm overflow-x-hidden break-words">
+                <div className="font-bold mb-2">【第11条】</div>
+                <div className="mb-2">
+                  メンバーは、各月の10日 (10日が休館日の場合翌営業日) までに本クラブに所定の退会届を出してください。その月末限りで退会することができます。電話等口頭での退会は受け付けません。10日を過ぎた場合は、事務手続きの都合上、翌月末日扱いになります。
+                </div>
+              </div>
+            ),
+            text: '次の文書は、会社が契約しているスポーツクラブの会則の一部です。\n3月10日に窓口で退会を申し出て、翌日、書類を提出した場合、退会日はいつになりますか。',
+            options: ['3月10日', '3月11日', '3月31日', '4月30日'],
+            correctAnswer: 3
+          },
+          {
+            id: '3-10',
+            context: (
+              <div className="text-gray-800 text-sm sm:text-base leading-relaxed sm:leading-loose font-serif overflow-x-hidden break-words">
+                <div className="mb-4">
+                  <div>○○株式会社</div>
+                  <div>代表取締役社長 野田弘様</div>
+                </div>
+                <div className="mb-4">
+                  謹啓　小夏の候、貴社益々ご隆昌のこととお慶び申し上げます。<br/>
+                  平素は格別のご高配を賜り厚く御礼申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  さて、去る6月15日開催の弊社定時株主総会におきまして、社名の変更が決議されましたのでご報告申し上げます。また、同日の株主総会ならびに取締役会におきまして、下記のとおり役員が選任され、それぞれ就任いたしました。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  つきましては、微力ながら最善を尽くして社業の発展に専心努力いたす所存でございますので、何卒ご高承の上、今後とも一層のご支援ご鞭撻を賜りますようお願い申し上げます。
+                </div>
+                <div className="mb-4" style={{ textIndent: '1em' }}>
+                  まずは、略儀ながら書中をもちましてご挨拶申し上げます。
+                </div>
+                <div className="text-right mb-6">謹言</div>
+                <div className="text-left mb-4">○○○○年6月21日</div>
+                <div className="text-right mb-8">
+                  <div>株式会社 池山産業</div>
+                  <div>代表取締役社長 松永健一</div>
+                </div>
+                <div className="text-center mb-6">記</div>
+                <div className="w-full sm:w-fit mx-auto mb-6">
+                  <div className="mb-2">旧社名: 株式会社 池山産業</div>
+                  <div className="mb-4">新社名: 株式会社 ABC (7月1日より)</div>
+                  <div className="flex gap-4 sm:gap-8"><span className="w-24 sm:w-28 text-justify" style={{textAlignLast: 'justify'}}>代表取締役社長</span>松永健一</div>
+                  <div className="flex gap-4 sm:gap-8"><span className="w-24 sm:w-28 text-justify" style={{textAlignLast: 'justify'}}>常務取締役</span>山田真</div>
+                  <div className="flex gap-4 sm:gap-8"><span className="w-24 sm:w-28 text-justify" style={{textAlignLast: 'justify'}}>取締役</span>谷口美香</div>
+                  <div className="flex gap-4 sm:gap-8"><span className="w-24 sm:w-28 text-justify" style={{textAlignLast: 'justify'}}>監査役</span>島津次郎</div>
+                </div>
+                <div className="text-right mt-6">以上</div>
+              </div>
+            ),
+            text: '次のような手紙が届きました。\nこの手紙の用件は何ですか。',
+            options: ['役員変更とその経緯', '社名変更とその経緯', '社名変更と新役員のお知らせ', '社業発展について協力のお願い'],
+            correctAnswer: 2
+          }
+        ]
+      }
+    ];
+
+    function App() {
+      // view: 'start' | 'intro' | 'question' | 'end' | 'admin' | 'admin_login'
+      const [view, setView] = useState('start');
+      const [sectionIndex, setSectionIndex] = useState(0);
+      const [questionIndex, setQuestionIndex] = useState(0);
+      const [answers, setAnswers] = useState({});
+      const [showWarning, setShowWarning] = useState(false);
+      
+      // 學生資料 state
+      const [studentId, setStudentId] = useState('');
+      const [studentName, setStudentName] = useState('');
+      const [formError, setFormError] = useState('');
+
+      // 教師後台登入 state
+      const [adminPassword, setAdminPassword] = useState('');
+      const [adminError, setAdminError] = useState('');
+
+      // 紀錄資料與狀態
+      const [records, setRecords] = useState([]);
+      const [isSubmitting, setIsSubmitting] = useState(false);
+      const [isLoadingAdmin, setIsLoadingAdmin] = useState(false);
+
+      useEffect(() => {
+        // 進入教師後台時，優先從 GAS 獲取資料
+        if (view === 'admin') {
+          if (GAS_URL && GAS_URL !== '') {
+            setIsLoadingAdmin(true);
+            fetch(GAS_URL)
+              .then(res => res.json())
+              .then(data => {
+                setRecords(data);
+                setIsLoadingAdmin(false);
+              })
+              .catch(err => {
+                console.error('GAS 讀取失敗，改為讀取本機紀錄:', err);
+                const storedRecords = JSON.parse(localStorage.getItem('jlpt_test_records') || '[]');
+                setRecords(storedRecords);
+                setIsLoadingAdmin(false);
+              });
+          } else {
+            const storedRecords = JSON.parse(localStorage.getItem('jlpt_test_records') || '[]');
+            setRecords(storedRecords);
+          }
+        }
+      }, [view]);
+
+      const handleOptionSelect = (questionId, optionIndex) => {
+        setAnswers({
+          ...answers,
+          [questionId]: optionIndex
+        });
+        setShowWarning(false);
+      };
+
+      const handleStart = () => {
+        if (!studentId.trim() || !studentName.trim()) {
+          setFormError('請輸入學號與姓名以開始測驗');
+          return;
+        }
+        setFormError('');
+        setAnswers({}); 
+        setSectionIndex(0);
+        setQuestionIndex(0);
+        setView('intro');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      const saveToLocalStorage = (record) => {
+        const existingRecords = JSON.parse(localStorage.getItem('jlpt_test_records') || '[]');
+        localStorage.setItem('jlpt_test_records', JSON.stringify([...existingRecords, record]));
+      };
+
+      const submitTest = async () => {
+        let correctCount = 0;
+        let totalQuestions = 0;
+        const detailedAnswers = []; 
+
+        // 計算分數與紀錄作答明細
+        testData.forEach(section => {
+          section.questions.forEach(q => {
+            totalQuestions++;
+            const userAns = answers[q.id];
+            const isCorrect = userAns === q.correctAnswer;
+            
+            if (isCorrect) correctCount++;
+
+            const displayAns = userAns !== undefined ? (userAns + 1) : '未答';
+            const status = isCorrect ? 'T' : 'F';
+            
+            detailedAnswers.push(`${displayAns}(${status})`);
+          });
+        });
+
+        const score = Math.round((correctCount / totalQuestions) * 100);
+
+        const newRecord = {
+          id: Date.now().toString(),
+          studentId: studentId.trim(),
+          studentName: studentName.trim(),
+          score,
+          correctCount,
+          totalQuestions,
+          detailedAnswers,
+          timestamp: new Date().toISOString()
+        };
+
+        setIsSubmitting(true);
+
+        if (GAS_URL && GAS_URL !== '') {
+          try {
+            const response = await fetch(GAS_URL, {
+              method: 'POST',
+              body: JSON.stringify(newRecord)
+            });
+            
+            const result = await response.json();
+            if (result.status === 'success') {
+              saveToLocalStorage(newRecord); 
+            } else {
+              throw new Error('GAS 回傳失敗');
+            }
+          } catch (error) {
+            console.error('上傳至 GAS 失敗，已轉存至本機:', error);
+            saveToLocalStorage(newRecord);
+          }
+        } else {
+          saveToLocalStorage(newRecord);
+        }
+
+        setIsSubmitting(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setView('end');
+      };
+
+      const handleNext = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (view === 'intro') {
+          setView('question');
+          setQuestionIndex(0);
+          setShowWarning(false);
+        } else if (view === 'question') {
+          const currentSection = testData[sectionIndex];
+          const currentQuestion = currentSection.questions[questionIndex];
+
+          if (answers[currentQuestion.id] === undefined && !showWarning) {
+            setShowWarning(true);
+            return;
+          }
+
+          setShowWarning(false);
+
+          if (questionIndex < currentSection.questions.length - 1) {
+            setQuestionIndex((prev) => prev + 1);
+          } else {
+            if (sectionIndex < testData.length - 1) {
+              setView('intro');
+              setSectionIndex((prev) => prev + 1);
+            } else {
+              submitTest();
+            }
+          }
+        }
+      };
+
+      const exportCSV = () => {
+        const questionHeaders = [];
+        testData.forEach(sec => sec.questions.forEach(q => questionHeaders.push(q.id)));
+
+        const headers = ['測驗時間', '學號', '姓名', '分數', '答對題數', '總題數', ...questionHeaders];
+        const rows = records.map(r => [
+          new Date(r.timestamp).toLocaleString(),
+          `="${r.studentId}"`, 
+          r.studentName,
+          r.score,
+          r.correctCount,
+          r.totalQuestions,
+          ...(r.detailedAnswers || Array(r.totalQuestions).fill(''))
+        ]);
+        
+        const csvContent = "\uFEFF" + [headers, ...rows].map(e => e.join(",")).join("\n");
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "測驗成績與詳細解答.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      if (view === 'start') {
+        return (
+          <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6 relative">
+            <div className="max-w-xl w-full bg-white rounded-2xl shadow-lg sm:shadow-xl p-8 sm:p-12 transition-all">
+              <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">読解練習</h1>
+              
+              <div className="space-y-5 mb-8">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">學號 <span className="text-red-500">*</span></label>
+                  <input 
+                    type="text" 
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    placeholder="請輸入您的學號"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">姓名 <span className="text-red-500">*</span></label>
+                  <input 
+                    type="text" 
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    placeholder="請輸入您的姓名"
+                  />
+                </div>
+                {formError && (
+                  <div className="text-red-500 text-sm font-medium">{formError}</div>
+                )}
+              </div>
+
+              <button 
+                onClick={handleStart}
+                className="w-full px-10 py-4 bg-blue-600 text-white rounded-xl font-medium text-lg hover:bg-blue-700 active:scale-95 transition-all shadow-md hover:shadow-lg"
+              >
+                開始測驗
+              </button>
+            </div>
+
+            <button 
+              onClick={() => {
+                setView('admin_login');
+                setAdminPassword('');
+                setAdminError('');
+              }}
+              className="absolute bottom-6 right-6 text-gray-400 hover:text-gray-600 text-sm font-medium transition-colors"
+            >
+              教師後台
+            </button>
+          </div>
+        );
+      }
+
+      if (view === 'admin_login') {
+        const handleAdminLogin = () => {
+          if (adminPassword === '3728') {
+            setView('admin');
+            setAdminPassword('');
+            setAdminError('');
+          } else {
+            setAdminError('密碼錯誤，請重新輸入');
+          }
+        };
+
+        return (
+          <div className="min-h-[100dvh] flex items-center justify-center p-4 sm:p-6">
+            <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg sm:shadow-xl p-8 text-center transition-all">
+              <div className="w-16 h-16 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">教師後台登入</h2>
+              
+              <div className="space-y-4 mb-8 text-left">
+                <div>
+                  <input 
+                    type="password" 
+                    value={adminPassword}
+                    onChange={(e) => {
+                      setAdminPassword(e.target.value);
+                      setAdminError('');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleAdminLogin();
+                    }}
+                    className={`w-full px-4 py-3 rounded-xl border focus:outline-none transition-all ${adminError ? 'border-red-500 focus:ring-2 focus:ring-red-200' : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}`}
+                    placeholder="請輸入後台密碼"
+                    autoFocus
+                  />
+                </div>
+                {adminError && (
+                  <div className="text-red-500 text-sm font-medium text-center">{adminError}</div>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setView('start')}
+                  className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 active:scale-95 transition-all"
+                >
+                  取消
+                </button>
+                <button 
+                  onClick={handleAdminLogin}
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 shadow-md hover:shadow-lg active:scale-95 transition-all"
+                >
+                  登入
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if (view === 'admin') {
+        return (
+          <div className="min-h-[100dvh] p-4 sm:p-6 lg:p-8">
+            <div className="max-w-5xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">測驗成績管理</h2>
+                    {isLoadingAdmin && <span className="text-sm text-blue-500 font-medium">正在從伺服器同步資料...</span>}
+                  </div>
+                  <div className="flex gap-3 w-full sm:w-auto">
+                    <button 
+                      onClick={() => setView('start')}
+                      className="flex-1 sm:flex-none px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      回首頁
+                    </button>
+                    <button 
+                      onClick={exportCSV}
+                      disabled={records.length === 0}
+                      className="flex-1 sm:flex-none px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      匯出 CSV
+                    </button>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto rounded-xl border border-gray-200">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">測驗時間</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">學號</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">姓名</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">分數</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">答對/總題數</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {records.length === 0 && !isLoadingAdmin ? (
+                        <tr>
+                          <td colSpan="5" className="px-6 py-8 text-center text-gray-500">目前尚無作答紀錄</td>
+                        </tr>
+                      ) : (
+                        records.map((record) => (
+                          <tr key={record.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                              {new Date(record.timestamp).toLocaleString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{record.studentId}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{record.studentName}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${record.score >= 60 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                {record.score} 分
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                              {record.correctCount} / {record.totalQuestions}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-4 text-sm text-gray-500 text-right">
+                  ※ 詳細的每一題作答狀況（T/F）請點擊「匯出 CSV」或至雲端試算表查看。
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if (view === 'end') {
+        return (
+          <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6">
+            <div className="max-w-xl w-full bg-white rounded-2xl shadow-lg sm:shadow-xl p-8 sm:p-12 text-center transition-all">
+              <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8">
+                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">測驗已完成</h1>
+              <p className="text-gray-600 mb-10 text-lg">
+                您的作答紀錄已成功送出。感謝您的參與！
+              </p>
+              <button 
+                onClick={() => setView('start')}
+                className="w-full sm:w-auto px-10 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 active:scale-95 transition-all"
+              >
+                回首頁
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      const currentSection = testData[sectionIndex];
+
+      if (view === 'intro') {
+        return (
+          <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 sm:p-6">
+            <div className="max-w-2xl w-full bg-white rounded-2xl shadow-lg sm:shadow-xl p-8 sm:p-14 text-center border-t-8 border-blue-600 transition-all">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{currentSection.title}</h2>
+              {currentSection.description && (
+                <p className="text-lg sm:text-xl text-gray-600 mb-10 sm:mb-12">{currentSection.description}</p>
+              )}
+              <div className="flex justify-center items-center">
+                <button 
+                  onClick={handleNext}
+                  className="w-full sm:w-auto px-10 py-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 shadow-md hover:shadow-lg active:scale-95 transition-all text-lg sm:text-base"
+                >
+                  進入本大題
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      const currentQuestion = currentSection.questions[questionIndex];
+      const isLastQuestionOverall = sectionIndex === testData.length - 1 && questionIndex === currentSection.questions.length - 1;
+      const progressPercentage = ((questionIndex + 1) / currentSection.questions.length) * 100;
+
+      return (
+        <div className={`min-h-[100dvh] pb-24 pt-6 sm:pt-10 px-4 sm:px-6 lg:px-8 flex flex-col items-center transition-colors duration-500 ${showWarning ? 'bg-red-50' : ''}`}>
+          <div className="w-full max-w-3xl">
+            
+            {showWarning && (
+              <div className="mb-4 sm:mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-xl shadow-sm animate-pulse">
+                <div className="flex items-center">
+                  <svg className="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                  </svg>
+                  <span className="font-medium text-sm sm:text-base">您尚未作答本題！若確定要留白跳過，請再次點擊「{isLastQuestionOverall ? '提交測驗' : '下一頁'}」。</span>
+                </div>
+              </div>
+            )}
+
+            <div className="mb-6 sm:mb-8">
+              <div className="flex justify-between items-center text-xs sm:text-sm font-medium text-gray-500 mb-2 px-1">
+                <span>{currentSection.title}</span>
+                <span>{questionIndex + 1} / {currentSection.questions.length}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                <div 
+                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out" 
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className={`bg-white rounded-2xl shadow-sm border p-5 sm:p-8 md:p-10 mb-8 transition-all duration-300 ${showWarning ? 'border-red-300 ring-4 ring-red-100' : 'border-gray-100'}`}>
+              
+              {currentQuestion.context && (
+                <div className="mb-8 p-5 sm:p-8 bg-gray-50 border border-gray-200 rounded-xl text-gray-800">
+                  {currentQuestion.context}
+                </div>
+              )}
+
+              <div className="mb-8 sm:mb-10">
+                <span className="text-lg sm:text-xl text-gray-800 font-medium whitespace-pre-wrap leading-relaxed block">
+                  {currentQuestion.text}
+                </span>
+              </div>
+
+              <div className="space-y-3 sm:space-y-4">
+                {currentQuestion.options.map((opt, optIdx) => {
+                  const isSelected = answers[currentQuestion.id] === optIdx;
+                  return (
+                    <label 
+                      key={optIdx} 
+                      className={`flex items-start p-4 sm:p-5 border-2 rounded-xl cursor-pointer transition-all duration-200 
+                        ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}
+                      onClick={() => handleOptionSelect(currentQuestion.id, optIdx)}
+                    >
+                      <div className={`mt-0.5 w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center mr-4 transition-colors
+                        ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-gray-300'}`}>
+                        {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white"></div>}
+                      </div>
+                      <span className={`text-base sm:text-lg pt-0.5 leading-snug ${isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
+                        {opt}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+
+            </div>
+
+            <div className="flex justify-end items-stretch sm:items-center mt-6">
+              <button 
+                disabled={isSubmitting}
+                onClick={handleNext}
+                className={`w-full sm:w-auto px-10 py-4 sm:py-3 text-white rounded-xl font-medium shadow-md hover:shadow-lg active:scale-95 transition-all text-lg sm:text-base text-center disabled:opacity-70 disabled:cursor-wait
+                  ${showWarning ? 'bg-red-600 hover:bg-red-700' : (isLastQuestionOverall ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700')}`}
+              >
+                {isSubmitting ? '資料傳送中...' : (isLastQuestionOverall ? '提交測驗' : '下一頁')}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    // 將 React App 渲染到畫面上
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
